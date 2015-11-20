@@ -18,13 +18,13 @@
         <h2>Island exploration</h2>
       </div>
       <form>
-        <label>Log json: </label><input style="display: inline" id="input_map" type="file" onchange="onSelectMap(event)"><br>
-        <label>Image de la map (svg): </label><input style="display: inline" id="input_map_pic" type="file" onchange="onSelectImg(event)"><br>
-        <label>Fichier de configuration des criques (_pois.json): </label><input style="display: inline" id="input_map_creeks" type="file" onchange="onSelectCreeks(event)"><br>
-        <label>Rapidité (- → +): </label> <div id="speed_bar"></div><br>
+        <label>JSON log (log.json): </label><input style="display: inline" id="input_map" type="file" onchange="onSelectMap(event)"><br>
+        <label>Map image (map.svg): </label><input style="display: inline" id="input_map_pic" type="file" onchange="onSelectImg(event)"><br>
+        <label>Creek configuration (_pois.json): </label><input style="display: inline" id="input_map_creeks" type="file" onchange="onSelectCreeks(event)"><br>
+        <label>Speed(- → +): </label> <div id="speed_bar"></div><br>
         <label>X: </label><input type="number" id="locX" value="0"/><br>
         <label>Y: </label><input type="number" id="locY" value="0"/><br>
-        <button type="button" class="btn btn-success" onClick="start();">Démarrer la simulation</button>
+        <button type="button" class="btn btn-success" onClick="start();">Start the simulation</button>
         <button type="button" id="btn_pause" class="btn btn-warning" onClick="pause();">Pause</button>
         <button type="button" class="btn btn-danger" onClick="stop();">STOP!</button>
       <form>
@@ -36,16 +36,15 @@
       </div>
       <hr>
       <div>
-        <h3>Informations</h3>
-        <h5><b>Utilisation de l'outil</b></h5>
+        <h3>Information</h3>
+        <h5><b>How to</b></h5>
         <p>
-          Il vous suffit de :
           <ol>
-            <li>Selectionner votre log json</li>
-            <li>Selectionner une image de l'ile correspondante (au format svg). Par défaut, l'ile de la semaine 46 sera selectionnée.</li>
-            <li>Vous pouvez faire varier la vitesse de l'animation tout au long de l'exploration</li>
-            <li>Vous pouvez modifier les coordonnées initiales</li>
-            <li>Une fois pret, appuyez sur Démarrer</li>
+            <li>Select your JSON log</li>
+            <li>Select your map image (svg format). By default the map from Week 46 (2015-2016) will be selected.</li>
+            <li>You can adjust the animation speed using the scroller</li>
+            <li>You may want to edit the initial coordinates (the ones were the drone starts)</li>
+            <li>When ready, press the start button</li>
           </ol>
         </p>
         <h5><b>Change log</b></h5>
@@ -54,22 +53,22 @@
             <li>
               11/20/2015
               <ul>
-                <li>Exploration aérienne (echo, heading, scan)</li>
-                <li>Exploration terrestre (prise en compte du move_to uniquement)</li>
-                <li>Ajout d'un fichier de configuration pour les criques: _pois.json (Disponible sur https://raw.githubusercontent.com/mosser/QGL-15-16/master/championships/weekXY/_pois.json en remplaçant XY par le numéro de semaine
+                <li>Aerial exploration (echo, heading, scan)</li>
+                <li>Ground exploration (inputs from move_to)</li>
+                <li>Added a config file for the creeks (_pois.json)
               </ul>
             </li>
           </ul>
         </p>
-        <h5><b>À venir</b></h5>
+        <h5><b>Todo</b></h5>
         <p>
           <ul>
-            <li>Affichage du budget restant</li>
-            <li>Affichage des contrat et de leurs progression</li>
-            <li>Gestions des commandes d'explorations terrestre</li>
+            <li>Add an output for the remaining budget</li>
+            <li>Add an ouput for the contracts and their progression</li>
+            <li>Manage the other ground exploration commands</li>
           </ul>
         </p>
-        <h5><b>Contributeurs</b></h5>
+        <h5><b>Contributors</b></h5>
         <p>
           <ul>
             <li>
