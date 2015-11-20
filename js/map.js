@@ -133,11 +133,13 @@ function printCreek(x, y, color) {
 }
 
 //Prints a circle at x,y
-function printCircle(x, y, size, color) {
+function printCircle(x, y, size, color, extra) {
     context.beginPath();
     if(!color)
-        color ="#FF0000"
-    context.arc(tile_size*x+size/2, tile_size*y+size/2, size, 0, 2 * Math.PI, false);
+        color ="#FF0000";
+    if(!extra)
+        extra = 0;
+    context.arc(tile_size*x+size/2+extra, tile_size*y+size/2+extra, size, 0, 2 * Math.PI, false);
     context.fillStyle = color;
     context.fill();
     context.stroke();
@@ -253,7 +255,7 @@ function handleJson(json) {
                     printCreek(locX, locY, "#FFFF00");
                     break;
                 case "move_to":
-                    printCircle(locX, locY, 2, "#AAAAAA");
+                    printCircle(locX, locY, 2, "#AAAAAA", tile_size/2);
                     updateMotion(json.data.parameters.direction);
                     move();
                     break;
