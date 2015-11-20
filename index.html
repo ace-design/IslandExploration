@@ -20,6 +20,7 @@
       <form>
         <label>Log json: </label><input style="display: inline" id="input_map" type="file" onchange="onSelectMap(event)"><br>
         <label>Image de la map (svg): </label><input style="display: inline" id="input_map_pic" type="file" onchange="onSelectImg(event)"><br>
+        <label>Fichier de configuration des criques (_pois.json): </label><input style="display: inline" id="input_map_creeks" type="file" onchange="onSelectCreeks(event)"><br>
         <label>Rapidité (- → +): </label> <div id="speed_bar"></div><br>
         <label>X: </label><input type="number" id="locX" value="0"/><br>
         <label>Y: </label><input type="number" id="locY" value="0"/><br>
@@ -55,6 +56,7 @@
               <ul>
                 <li>Exploration aérienne (echo, heading, scan)</li>
                 <li>Exploration terrestre (prise en compte du move_to uniquement)</li>
+                <li>Ajout d'un fichier de configuration pour les criques: _pois.json (Disponible sur https://raw.githubusercontent.com/mosser/QGL-15-16/master/championships/weekXY/_pois.json en remplaçant XY par le numéro de semaine
               </ul>
             </li>
           </ul>

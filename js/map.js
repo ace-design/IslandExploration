@@ -23,6 +23,7 @@ var isPaused = false;
 var loadedJson = {};
 var width = 600;
 var height = 600;
+var loadedCreeks = {};
 
 //Let's initialize the canvas and load the context
 function initialize(json) {
@@ -52,6 +53,12 @@ function initialize(json) {
         setTimeout(clearBoard(), 500);
     };
     imageObj.src = img;
+    for(var i in loadedCreeks) {
+        var id = loadedCreeks[i].uid;
+        creeks[id] = {};
+        creeks[id].x = parseInt(loadedCreeks[i].x/10);
+        creeks[id].y = parseInt(loadedCreeks[i].y/10);
+    }
 }
 
 function clearBoard() {
@@ -67,6 +74,18 @@ function onSelectMap(event) {
 
     reader.onload = function(event) {
         loadedJson = JSON.parse(event.target.result);
+    };
+
+    reader.readAsText(selectedFile);
+}
+
+function onSelectCreeks(event) {
+    var selectedFile = event.target.files[0];
+    var reader = new FileReader();
+    isFinished = true;
+
+    reader.onload = function(event) {
+        loadedCreeks = JSON.parse(event.target.result);
     };
 
     reader.readAsText(selectedFile);
@@ -197,9 +216,20 @@ function updateMotion(dir) {
 
 //Saves the creeks
 function addCreeks(_creeks, x, y) {
+    
     for(var i in _creeks) {
         var id = _creeks[i];
-        creeks[id] = {x:x, y:y};
+        if(creeks[id] == undefined)
+            creeks[id] = {x:x, y:y};
+        creeks[id].discovered = true;
+    }
+}
+
+function printCreeks() {
+    for(var i in creeks) {
+        var creek = creeks[i]
+        if(creek.discovered)
+            printCreek(creek.x, creek.y, "#FF0000");
     }
 }
 
@@ -216,10 +246,7 @@ function handleJson(json) {
         if(json.part == "Explorer") {
             switch(json.data.action) {
                 case "land":
-                    for(var i in creeks) {
-                        var creek = creeks[i]
-                        printCreek(creek.x, creek.y, "#FF0000");
-                    }
+                    printCreeks();
                     var creek = creeks[json.data.parameters.creek];
                     locX = creek.x;
                     locY = creek.y;
@@ -250,7 +277,7 @@ function handleJson(json) {
                 case "scan":
                 if(json.data.extras.creeks.length != 0) {
                     addCreeks(json.data.extras.creeks, locX*3+1, locY*3+1);
-                    printCreek(locX*3+1, locY*3+1);
+                    printCreeks();
                 }
                 break;
             }
