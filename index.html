@@ -1,0 +1,78 @@
+<!doctype html>
+<!-- @author Günther Jungbluth -->
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/jquery.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <script src="js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/jquery-ui.css">
+    <script src="js/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/map.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="jumbotron">
+        <h2>Island exploration</h2>
+      </div>
+      <form>
+        <label>Log json: </label><input style="display: inline" id="input_map" type="file" onchange="onSelectMap(event)"><br>
+        <label>Image de la map (600*600): </label><input style="display: inline" id="input_map_pic" type="file" onchange="onSelectImg(event)"><br>
+        <label>Rapidité: </label> <div id="speed_bar"></div><br>
+        <button type="button" class="btn btn-success" onClick="start();">Démarrer la simulation</button>
+        <button type="button" id="btn_pause" class="btn btn-warning" onClick="pause();">Pause</button>
+        <button type="button" class="btn btn-danger" onClick="stop();">STOP!</button>
+      <form>
+      <hr>
+      <div class="row">
+        <div class="col-lg-1 col-centered" style="width: 600px">
+          <canvas id="map" width="600" height="600"></canvas>
+        </div>
+      </div>
+      <hr>
+      <div>
+        <h3>Informations</h3>
+        <h5><b>Utilisation de l'outil</b></h5>
+        <p>
+          Il vous suffit de :
+          <ol>
+            <li>Selectionner votre log json</li>
+            <li>Selectionner une image de l'ile correspondante (600*600px). Par défaut, l'ile de la semaine 46 sera selectionnée.</li>
+            <li>Vous pouvez faire varier la vitesse de l'animation tout au long de l'exploration</li>
+            <li>Une fois pret, appuyez sur Démarrer</li>
+          </ol>
+        </p>
+        <h5><b>Change log</b></h5>
+        <p>
+          <ul>
+            <li>
+              11/20/2015
+              <ul>
+                <li>Exploration aérienne (echo, heading, scan)</li>
+                <li>Exploration terrestre (prise en compte du move_to uniquement)</li>
+              </ul>
+            </li>
+          </ul>
+        </p>
+        <h5><b>À venir</b></h5>
+        <p>
+          <ul>
+            <li>Affichage du budget restant</li>
+            <li>Affichage des coûts moyens</li>
+            <li>Gestions des commandes d'explorations terrestre</li>
+          </ul>
+        </p>
+        <h5><b>Contributeurs</b></h5>
+        <p>
+          <ul>
+            <li>
+              Günther Jungbluth (<a href="mailto:gunther.jungbluth.poirier@gmail.com">gunther.jungbluth.poirier@gmail.com</a>)
+            </li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
