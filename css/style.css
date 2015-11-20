@@ -7,3 +7,10 @@
   padding-bottom: 18px;
   padding-top: 18px;
 }
+
+#speed_bar > div {
+  background: rgba(0, 117, 255, 0.7)!important;
+}
+#speed_bar {
+  background: rgba(0, 117, 255, 0.59)!important;
+}

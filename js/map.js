@@ -31,8 +31,8 @@ function initialize(json) {
     creeks = {};
     json_index = 1;
     isFinished = false;
-    locX = 0;
-    locY = 0;
+    locX = parseInt($("#locX").val());
+    locY = parseInt($("#locY").val());
     isPaused = false;
     updatePause();
     direction = map_json[0].data.heading;
