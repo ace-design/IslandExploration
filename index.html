@@ -19,7 +19,7 @@
       </div>
       <form>
         <label>Log json: </label><input style="display: inline" id="input_map" type="file" onchange="onSelectMap(event)"><br>
-        <label>Image de la map (600*600): </label><input style="display: inline" id="input_map_pic" type="file" onchange="onSelectImg(event)"><br>
+        <label>Image de la map (svg): </label><input style="display: inline" id="input_map_pic" type="file" onchange="onSelectImg(event)"><br>
         <label>Rapidité (- → +): </label> <div id="speed_bar"></div><br>
         <label>X: </label><input type="number" id="locX" value="0"/><br>
         <label>Y: </label><input type="number" id="locY" value="0"/><br>
@@ -29,7 +29,7 @@
       <form>
       <hr>
       <div class="row">
-        <div class="col-lg-1 col-centered" style="width: 600px">
+        <div style="text-align: center">
           <canvas id="map" width="600" height="600"></canvas>
         </div>
       </div>
@@ -41,7 +41,7 @@
           Il vous suffit de :
           <ol>
             <li>Selectionner votre log json</li>
-            <li>Selectionner une image de l'ile correspondante (600*600px). Par défaut, l'ile de la semaine 46 sera selectionnée.</li>
+            <li>Selectionner une image de l'ile correspondante (au format svg). Par défaut, l'ile de la semaine 46 sera selectionnée.</li>
             <li>Vous pouvez faire varier la vitesse de l'animation tout au long de l'exploration</li>
             <li>Vous pouvez modifier les coordonnées initiales</li>
             <li>Une fois pret, appuyez sur Démarrer</li>
@@ -63,7 +63,7 @@
         <p>
           <ul>
             <li>Affichage du budget restant</li>
-            <li>Affichage des coûts moyens</li>
+            <li>Affichage des contrat et de leurs progression</li>
             <li>Gestions des commandes d'explorations terrestre</li>
           </ul>
         </p>

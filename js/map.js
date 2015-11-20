@@ -12,7 +12,7 @@ var locX = 0, locY = 0;
 var motX = 1, motY = 0;
 var json_index = 0;
 var direction = "E";
-var tile_size = 6;
+var tile_size = 10;
 var lastAction = "echo";
 var chunks = {};
 var isFinished = false;
@@ -21,6 +21,8 @@ var men = 0;
 var creeks = {};
 var isPaused = false;
 var loadedJson = {};
+var width = 600;
+var height = 600;
 
 //Let's initialize the canvas and load the context
 function initialize(json) {
@@ -39,11 +41,22 @@ function initialize(json) {
     budget = map_json[0].data.budget;
     men = map_json[0].data.men;
     updateMotion(direction);
+    var imageObj = new Image();
+    imageObj.onload = function() {
+        width = this.width;
+        height = this.width;
+        canvas.width = width;
+        canvas.height = height;
+        canvas[0].style.width = width;
+        canvas[0].style.height = height;
+        setTimeout(clearBoard(), 500);
+    };
+    imageObj.src = img;
 }
 
 function clearBoard() {
     context.fillStyle = "#000000";
-    context.fillRect(0,0,600,600);
+    context.fillRect(0,0,width,height);
 }
 
 //Loads the json map from the file input
@@ -59,21 +72,11 @@ function onSelectMap(event) {
     reader.readAsText(selectedFile);
 }
 
-//Prototype poru convertir une image en base64 (pour le canvas)
-File.prototype.convertToBase64 = function(callback){
-        var FR= new FileReader();
-        FR.onload = function(e) {
-             callback(e.target.result)
-        };       
-        FR.readAsDataURL(this);
-}
 
 function onSelectImg(event) {
     var selectedFile = event.target.files[0];
     isFinished = true;
-    selectedFile.convertToBase64(function(r){
-        img = r;
-    });
+    img = URL.createObjectURL(selectedFile);
 }
 
 //Prints a tile at x,y
@@ -107,7 +110,7 @@ function printCreek(x, y, color) {
     context.beginPath();
     if(!color)
         color ="#FF0000"
-    printCircle(x, y, tile_size, color);
+    printCircle(x, y, tile_size/2, color);
 }
 
 //Prints a circle at x,y
@@ -246,8 +249,8 @@ function handleJson(json) {
             switch(lastAction) {
                 case "scan":
                 if(json.data.extras.creeks.length != 0) {
-                    addCreeks(json.data.extras.creeks, locX*3, locY*3);
-                    printCreek(locX*3, locY*3);
+                    addCreeks(json.data.extras.creeks, locX*3+1, locY*3+1);
+                    printCreek(locX*3+1, locY*3+1);
                 }
                 break;
             }
@@ -255,7 +258,7 @@ function handleJson(json) {
         if(json_index < map_json.length) {
             handleJson(map_json[json_index++]);
         }
-    }, speed*100);
+    }, speed <= 0.01 ? 0 : speed*100);
 }
 
 //Load the necessary content when the page is ready
