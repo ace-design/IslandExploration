@@ -24,6 +24,7 @@ var loadedJson = {};
 var width = 600;
 var height = 600;
 var loadedCreeks = {};
+var movedTo = {};
 
 //Let's initialize the canvas and load the context
 function initialize(json) {
@@ -34,8 +35,9 @@ function initialize(json) {
     creeks = {};
     json_index = 1;
     isFinished = false;
-    locX = parseInt($("#locX").val()/3);
-    locY = parseInt($("#locY").val()/3);
+    movedTo = {};
+    locX = parseInt($("#locX").val())-1;
+    locY = parseInt($("#locY").val())-1;
     isPaused = false;
     updatePause();
     direction = map_json[0].data.heading;
@@ -59,6 +61,7 @@ function initialize(json) {
         creeks[id].x = parseInt(loadedCreeks[i].x/10);
         creeks[id].y = parseInt(loadedCreeks[i].y/10);
     }
+    console.log(locX+":"+locY);
 }
 
 function clearBoard() {
@@ -106,7 +109,6 @@ function printTile(src,x,y) {
 //Prints part of the map at x,y
 function printMapPart(src,x,y, size) { 
     var imageObj = new Image();
-
     imageObj.onload = function() {
         context.drawImage(imageObj, x*tile_size, y*tile_size, size*3, size*3, tile_size*x, tile_size*y, size*3, size*3);
     };
@@ -161,10 +163,11 @@ function printCrew(x, y) {
 //Moves the drone and update the display
 function moveDrone() {
     if(chunks[locX*3+":"+locY*3] == undefined)
-        printTile(img_black, locX*3, locY*3);
+        printMapPart(img_black, locX*3, locY*3, tile_size*3);
     move();
-    if(chunks[locX*3+":"+locY*3] == undefined)
-        printPlane("img/drone_"+direction.toLowerCase()+".png", locX*3, locY*3);
+    //if(chunks[locX*3+":"+locY*3] == undefined)
+    //    printPlane("img/drone_"+direction.toLowerCase()+".png", locX*3, locY*3);
+    chunks[locX*3+":"+locY*3] = {};
 }
 
 //Update the coordinates
@@ -254,17 +257,28 @@ function handleJson(json) {
                     locY = creek.y;
                     printCreek(locX, locY, "#FFFF00");
                     break;
+                case "explore":
+                    printCircle(locX, locY, 3, "#00FFFF", tile_size/3);
+                    movedTo[locX+":"+locY] = {x:locX};
+                    break;
+                case "exploit":
+                    printCircle(locX, locY, 4, "#BBFFBB", tile_size/4);
+                    movedTo[locX+":"+locY] = {x:locX};
+                    break;
                 case "move_to":
-                    printCircle(locX, locY, 2, "#AAAAAA", tile_size/2);
+                    if(movedTo[locX+":"+locY] == undefined)
+                        printCircle(locX, locY, 1, "#FFFFFF", tile_size/2);
+                    movedTo[locX+":"+locY] = {x:locX};
                     updateMotion(json.data.parameters.direction);
                     move();
                     break;
                 case "fly":
                     moveDrone();
+                    printMapPart(img, locX*3, locY*3, tile_size*3)
                     break;
                 case "scan":
                     chunks[locX*3+":"+locY*3] = {};
-                    printTile(img, locX*3, locY*3);
+                    printMapPart(img, locX*3, locY*3, tile_size*3)
                     break;
                 case "heading":
                     moveDrone();
