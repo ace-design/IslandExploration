@@ -25,6 +25,8 @@ var width = 600;
 var height = 600;
 var loadedCreeks = {};
 var movedTo = {};
+var exportVideo = false;
+var frameNumber = 0;
 
 //Let's initialize the canvas and load the context
 function initialize(json) {
@@ -35,6 +37,7 @@ function initialize(json) {
     creeks = {};
     json_index = 1;
     isFinished = false;
+    frameNumber = 0;
     movedTo = {};
     locX = parseInt($("#locX").val())-1;
     locY = parseInt($("#locY").val())-1;
@@ -45,14 +48,16 @@ function initialize(json) {
     men = map_json[0].data.men;
     updateMotion(direction);
     var imageObj = new Image();
+    imageObj.setAttribute('crossOrigin', 'anonymous');
     imageObj.onload = function() {
         width = this.width;
         height = this.width;
         canvas.width = width;
         canvas.height = height;
-        canvas[0].style.width = width;
-        canvas[0].style.height = height;
+        canvas.style.width = width;
+        canvas.style.height = height;
         setTimeout(clearBoard(), 500);
+        canvas.style.left = "calc(50% - "+width+"px);"
     };
     imageObj.src = img;
     for(var i in loadedCreeks) {
@@ -61,7 +66,6 @@ function initialize(json) {
         creeks[id].x = parseInt(loadedCreeks[i].x/10);
         creeks[id].y = parseInt(loadedCreeks[i].y/10);
     }
-    console.log(locX+":"+locY);
 }
 
 function clearBoard() {
@@ -109,6 +113,7 @@ function printTile(src,x,y) {
 //Prints part of the map at x,y
 function printMapPart(src,x,y, size) { 
     var imageObj = new Image();
+    imageObj.setAttribute('crossOrigin', 'anonymous');
     imageObj.onload = function() {
         context.drawImage(imageObj, x*tile_size, y*tile_size, size*3, size*3, tile_size*x, tile_size*y, size*3, size*3);
     };
@@ -119,7 +124,7 @@ function printMapPart(src,x,y, size) {
 function printPlane(src,x,y) { 
     src="img/gray.png";
     var imageObj = new Image();
-
+    imageObj.setAttribute('crossOrigin', 'anonymous');
     imageObj.onload = function() {
         context.drawImage(imageObj, 0, 0, 32, 32, tile_size*x, tile_size*y, tile_size*3, tile_size*3);
     };
@@ -301,7 +306,20 @@ function handleJson(json) {
         if(json_index < map_json.length) {
             handleJson(map_json[json_index++]);
         }
+        if(exportVideo)
+            saveFrame();
     }, speed <= 0.01 ? 0 : speed*100);
+}
+
+function saveFrame() {
+    var req = new XMLHttpRequest();
+    req.open('post', 'http://localhost:8888/index.php');
+    var data = canvas.toDataURL();
+    data = 'data=' + encodeURIComponent(data) + '&i=' + frameNumber++;
+    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    req.setRequestHeader("Content-length", data.length);
+    req.setRequestHeader("Connection", "close");
+    req.send(data);
 }
 
 //Load the necessary content when the page is ready
