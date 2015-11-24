@@ -27,6 +27,8 @@ var loadedCreeks = {};
 var movedTo = {};
 var exportVideo = false;
 var frameNumber = 0;
+var div_contracts;
+var contracts = {};
 
 //Let's initialize the canvas and load the context
 function initialize(json) {
@@ -46,6 +48,7 @@ function initialize(json) {
     direction = map_json[0].data.heading;
     budget = map_json[0].data.budget;
     men = map_json[0].data.men;
+    div_contracts.innerHTML = "";
     updateMotion(direction);
     var imageObj = new Image();
     imageObj.setAttribute('crossOrigin', 'anonymous');
@@ -189,7 +192,29 @@ function start() {
         $("#input_map").val("");
         $("#input_map_pic").val("");
         handleJson(map_json[json_index]);
+        contracts = map_json[0].data.contracts;
+        div_contracts.innerHTML = "";
+        for(var i in contracts) {
+            var contract = contracts[i];  
+            contract.gathered = 0;
+            div_contracts.innerHTML += "<div id='contract_"+i+"_info'><b>"+contract.amount+" " + contract.resource+":</b> <span id='contract_"+i+"'></span></div>"; 
+            updateContract(contract.resource, 0);
+        }
     }, 50);
+}
+
+function updateContract(resource, amount) {
+    for(var i in contracts) {
+        var contract = contracts[i];
+        if(contract.resource == resource) {
+            contract.gathered+=amount;
+            var perc = Math.round(Math.min(1, contract.gathered/contract.amount)*100);
+            $("#contract_"+i)[0].innerHTML = contract.gathered + " gathered, <span style='color:"+
+                (perc < 25 ? "#AA5555" : perc < 75 ? "#A08800" : perc < 99 ? "#929E00" : "#00AA00")
+                +"'>" + perc+"% completed</span>";
+            break;
+        }
+    }
 }
 
 //Arrete la simulation
@@ -292,15 +317,18 @@ function handleJson(json) {
                     direction = json.data.parameters.direction;
                     break;
             }
-            lastAction = json.data.action;
+            lastAction = json.data;
         } else if(json.part == "Engine") {
-            switch(lastAction) {
+            switch(lastAction.action) {
                 case "scan":
-                if(json.data.extras.creeks.length != 0) {
-                    addCreeks(json.data.extras.creeks, locX*3+1, locY*3+1);
-                    printCreeks();
-                }
-                break;
+                    if(json.data.extras.creeks.length != 0) {
+                        addCreeks(json.data.extras.creeks, locX*3+1, locY*3+1);
+                        printCreeks();
+                    }
+                    break;
+                case "exploit":
+                    updateContract(lastAction.parameters.resource, json.data.extras.amount);
+                    break;
             }
         }
         if(json_index < map_json.length) {
@@ -340,4 +368,5 @@ $(document).ready(function(){
         $("#speed_bar").slider("value" , $(this).val())
     });
     clearBoard();
+    div_contracts = $("#contracts")[0];
 });
