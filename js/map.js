@@ -4,8 +4,8 @@
 
 var map_json = {};
 var speed = 1.0;
-var img = "img/week46.png";
-var img_black = "img/black.png";
+var img = "http://ace-design.github.io/IslandExploration/img/week46.png";
+var img_black = "http://ace-design.github.io/IslandExploration/img/black.png";
 var canvas;
 var context;
 var locX = 0, locY = 0;
@@ -41,6 +41,7 @@ function initialize(json) {
     isFinished = false;
     frameNumber = 0;
     movedTo = {};
+    $("#stop").show();
     locX = parseInt($("#locX").val())-1;
     locY = parseInt($("#locY").val())-1;
     isPaused = false;
@@ -115,28 +116,61 @@ function printTile(src,x,y) {
 
 //Prints part of the map at x,y
 function printMapPart(src,x,y, size) { 
-    var imageObj = new Image();
-    imageObj.setAttribute('crossOrigin', 'anonymous');
-    imageObj.onload = function() {
-        context.drawImage(imageObj, x*tile_size, y*tile_size, size*3, size*3, tile_size*x, tile_size*y, size*3, size*3);
-    };
-    imageObj.src = src;
+    var obj = {src:src, x:x, y:y, size:size};
+    addToSchedule(function(SCHEDULEID, obj) {
+        var imageObj = new Image();
+        imageObj.setAttribute('crossOrigin', 'anonymous');
+        imageObj.onload = function() {
+            context.drawImage(imageObj, obj.x*tile_size, obj.y*tile_size, obj.size, obj.size, tile_size*obj.x, tile_size*obj.y, obj.size, obj.size);
+            finishSchedule(SCHEDULEID);
+        };
+        imageObj.src = obj.src;
+    },obj);
+}
+
+var schedules = {};
+var scheduleId = 0;
+
+function addToSchedule(funct,obj) {
+    schedules[scheduleId] = [funct,obj];
+    if(sizeOfObj(schedules) == 1) {
+        funct(scheduleId,obj);
+    }
+    scheduleId++;
+}
+
+function finishSchedule(scheduleId1) {
+    delete schedules[scheduleId1];
+    if(schedules[scheduleId1+1]) {
+        schedules[scheduleId1+1][0](scheduleId1+1,schedules[scheduleId1+1][1]);
+    }
+}
+
+function sizeOfObj(object) {
+    var size = 0;
+    for(var key in object) size++;
+    return size;
 }
 
 //Prints the drone, needs progress
 function printPlane(src,x,y) { 
-    src="img/gray.png";
-    var imageObj = new Image();
-    imageObj.setAttribute('crossOrigin', 'anonymous');
-    imageObj.onload = function() {
-        context.drawImage(imageObj, 0, 0, 32, 32, tile_size*x, tile_size*y, tile_size*3, tile_size*3);
-    };
-    imageObj.src = src;
+    var obj = {src:src, x:x, y:y};
+    addToSchedule(function(SCHEDULEID, obj) {
+        if(!obj.src)
+            sobj.rc="img/gray.png";
+        var imageObj = new Image();
+        imageObj.setAttribute('crossOrigin', 'anonymous');
+        imageObj.onload = function() {
+            context.drawImage(imageObj, 0, 0, 32, 32, tile_size*obj.x, tile_size*obj.y, tile_size*3, tile_size*3);
+            finishSchedule(SCHEDULEID);
+        };
+        imageObj.src = obj.src;
+    },obj);
+    
 }
 
 //Prints a creek at x,y
 function printCreek(x, y, color) {
-    context.beginPath();
     if(!color)
         color ="#FF0000"
     printCircle(x, y, tile_size/2, color);
@@ -144,28 +178,38 @@ function printCreek(x, y, color) {
 
 //Prints a circle at x,y
 function printCircle(x, y, size, color, extra) {
-    context.beginPath();
-    if(!color)
-        color ="#FF0000";
-    if(!extra)
-        extra = 0;
-    context.arc(tile_size*x+size/2+extra, tile_size*y+size/2+extra, size, 0, 2 * Math.PI, false);
-    context.fillStyle = color;
-    context.fill();
-    context.stroke();
+    var obj = {x:x, y:y, size:size, color:color, extra:extra};
+    addToSchedule(function(SCHEDULEID, obj) {
+        context.beginPath();
+        if(!obj.color)
+            obj.color ="#FF0000";
+        if(!obj.extra)
+            obj.extra = 0;
+        context.arc(tile_size*obj.x+obj.size/2+obj.extra, tile_size*obj.y+obj.size/2+obj.extra, obj.size, 0, 2 * Math.PI, false);
+        context.fillStyle = obj.color;
+        context.fill();
+        context.stroke();
+        finishSchedule(SCHEDULEID);
+    },obj);
+    
 }
 
 //Prints the crew
 function printCrew(x, y) {
-    context.beginPath();
-    context.moveTo(tile_size*x-tile_size/2, tile_size*y-tile_size/2);
-    context.lineTo(tile_size*x+tile_size/2, tile_size*y+tile_size/2);
-    context.strokeStyle = "#FF0000";
-    context.stroke();
-    context.beginPath();
-    context.moveTo(tile_size*x-tile_size/2, tile_size*y+tile_size/2);
-    context.lineTo(tile_size*x+tile_size/2, tile_size*y-tile_size/2);
-    context.stroke();
+    var obj = {x:x, y:y};
+    addToSchedule(function(SCHEDULEID, obj) {
+        context.beginPath();
+        context.moveTo(tile_size*obj.x-tile_size/2, tile_size*obj.y-tile_size/2);
+        context.lineTo(tile_size*obj.x+tile_size/2, tile_size*obj.y+tile_size/2);
+        context.strokeStyle = "#FF0000";
+        context.stroke();
+        context.beginPath();
+        context.moveTo(tile_size*obj.x-tile_size/2, tile_size*obj.y+tile_size/2);
+        context.lineTo(tile_size*obj.x+tile_size/2, tile_size*obj.y-tile_size/2);
+        context.stroke();
+        finishSchedule(SCHEDULEID);
+    },obj);
+    
 }
 
 //Moves the drone and update the display
@@ -268,16 +312,18 @@ function printCreeks() {
     }
 }
 
+var toDraw = [];
 //Handles the different game steps
 function handleJson(json) {
     setTimeout(function () {
         if(isFinished) {
+            $("#btn_stop").hide();
             return;
         }
         if(isPaused) {
             handleJson(json);
             return;
-        } 
+        }
         if(json.part == "Explorer") {
             switch(json.data.action) {
                 case "land":
@@ -296,25 +342,32 @@ function handleJson(json) {
                     movedTo[locX+":"+locY] = {x:locX};
                     break;
                 case "move_to":
-                    if(movedTo[locX+":"+locY] == undefined)
+                    if(movedTo[locX+":"+locY] == undefined) {
+                        printMapPart(img, locX, locY, tile_size)
                         printCircle(locX, locY, 1, "#FFFFFF", tile_size/2);
+                    }
                     movedTo[locX+":"+locY] = {x:locX};
                     updateMotion(json.data.parameters.direction);
                     move();
                     break;
                 case "fly":
+                    printMapPart(img, locX*3, locY*3, tile_size*3)
                     moveDrone();
                     printMapPart(img, locX*3, locY*3, tile_size*3)
+                    printPlane("http://ace-design.github.io/IslandExploration/img/drone_"+direction+".png", locX*3, locY*3);
                     break;
                 case "scan":
                     chunks[locX*3+":"+locY*3] = {};
-                    printMapPart(img, locX*3, locY*3, tile_size*3)
+                    printMapPart(img, locX*3, locY*3, tile_size*3);
+                    printPlane("http://ace-design.github.io/IslandExploration/img/drone_"+direction+".png", locX*3, locY*3);
                     break;
                 case "heading":
+                    printMapPart(img, locX*3, locY*3, tile_size*3)
                     moveDrone();
                     updateMotion(json.data.parameters.direction);
                     moveDrone();
                     direction = json.data.parameters.direction;
+                    printPlane("http://ace-design.github.io/IslandExploration/img/drone_"+direction+".png", locX*3, locY*3);
                     break;
             }
             lastAction = json.data;
@@ -331,11 +384,16 @@ function handleJson(json) {
                     break;
             }
         }
-        if(json_index < map_json.length) {
-            handleJson(map_json[json_index++]);
-        }
-        if(exportVideo)
-            saveFrame();
+        //Wait for the drawing
+        addToSchedule(function(SCHEDULEID) {
+            if(json_index < map_json.length) {
+                handleJson(map_json[json_index++]);
+            } else
+                $("#btn_stop").hide();
+            if(exportVideo)
+                saveFrame();
+            finishSchedule(SCHEDULEID);
+        });
     }, speed <= 0.01 ? 0 : speed*100);
 }
 

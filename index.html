@@ -26,7 +26,7 @@
         <label>Y: </label><input type="number" id="locY" value="1"/><br>
         <button type="button" class="btn btn-success" onClick="start();">Start the simulation</button>
         <button type="button" id="btn_pause" class="btn btn-warning" onClick="pause();">Pause</button>
-        <button type="button" class="btn btn-danger" onClick="stop();">STOP!</button>
+        <button type="button" class="btn btn-danger" onClick="stop();" id="btn_stop">STOP!</button>
       </form>
       <hr>
     </div>
@@ -51,7 +51,7 @@
         <p>
           <ol>
             <li>Select your JSON log</li>
-            <li>Select your map image (svg format). By default the map from Week 46 (2015-2016) will be selected.</li>
+            <li>Select your map image (svg format).</li>
             <li>You can adjust the animation speed using the scroller</li>
             <li>You may want to edit the initial coordinates (the ones were the drone starts)</li>
             <li>When ready, press the start button</li>
@@ -60,6 +60,13 @@
         <h5><b>Change log</b></h5>
         <p>
           <ul>
+            <li>
+              11/25/2015
+              <ul>
+                <li>Fixed the dislay bug (It no longer display some un-explored tiles)</li>
+                <li>Added a display for the drone (sprite)</li>
+              </ul>
+            </li>
             <li>
               11/24/2015
               <ul>
