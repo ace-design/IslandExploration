@@ -42,8 +42,8 @@ function initialize(json) {
     frameNumber = 0;
     movedTo = {};
     $("#stop").show();
-    locX = parseInt($("#locX").val())-1;
-    locY = parseInt($("#locY").val())-1;
+    locX = parseInt($("#locX").val())/3;
+    locY = parseInt($("#locY").val())/3;
     isPaused = false;
     updatePause();
     direction = map_json[0].data.heading;
@@ -243,6 +243,7 @@ function start() {
             contract.gathered = 0;
             div_contracts.innerHTML += "<div id='contract_"+i+"_info'><b>"+contract.amount+" " + contract.resource+":</b> <span id='contract_"+i+"'></span></div>"; 
             updateContract(contract.resource, 0);
+            updateBudget();
         }
     }, 50);
 }
@@ -259,6 +260,10 @@ function updateContract(resource, amount) {
             break;
         }
     }
+}
+
+function updateBudget() {
+    $("#budget").html("<hr><b>Budget: </b> " + budget);
 }
 
 //Arrete la simulation
@@ -383,13 +388,19 @@ function handleJson(json) {
                     updateContract(lastAction.parameters.resource, json.data.extras.amount);
                     break;
             }
+            if(json.data.cost) {
+                budget-=json.data.cost;
+            }
         }
         //Wait for the drawing
         addToSchedule(function(SCHEDULEID) {
+            updateBudget();
             if(json_index < map_json.length) {
                 handleJson(map_json[json_index++]);
-            } else
+            } else {
+                printCreeks();
                 $("#btn_stop").hide();
+            }
             if(exportVideo)
                 saveFrame();
             finishSchedule(SCHEDULEID);
