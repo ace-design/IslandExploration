@@ -346,6 +346,12 @@ function handleJson(json) {
                     printCircle(locX, locY, 4, "#BBFFBB", tile_size/4);
                     movedTo[locX+":"+locY] = {x:locX};
                     break;
+                case "transform":
+                    for(var key in json.data.parameters) {
+                        var amount = json.data.parameters[key];
+                        updateContract(key, -amount);
+                    }
+                    break;
                 case "move_to":
                     if(movedTo[locX+":"+locY] == undefined) {
                         printMapPart(img, locX, locY, tile_size)
@@ -386,6 +392,9 @@ function handleJson(json) {
                     break;
                 case "exploit":
                     updateContract(lastAction.parameters.resource, json.data.extras.amount);
+                    break;
+                case "transform":
+                    updateContract(json.data.extras.kind, json.data.extras.production);
                     break;
             }
             if(json.data.cost) {
