@@ -316,10 +316,8 @@ function printEcho(dir, range) {
             mx=-1;my=0;
             break;
     }
-    console.log("echo: " + dir + " : " + range);
     context.beginPath();
     context.rect(locX*tile_size*3, locY*tile_size*3, (mx*range*tile_size*3+tile_size*3), (my*range*tile_size*3+tile_size*3));
-    console.log((mx*range*tile_size*3)+":"+(my*range*tile_size*3));
     context.fillStyle = '#013857';
     context.fill();
 }
