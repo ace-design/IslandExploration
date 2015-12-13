@@ -42,8 +42,8 @@ function initialize(json) {
     frameNumber = 0;
     movedTo = {};
     $("#stop").show();
-    locX = parseInt($("#locX").val())/3;
-    locY = parseInt($("#locY").val())/3;
+    locX = parseInt($("#locX").val()/3);
+    locY = parseInt($("#locY").val()/3);
     isPaused = false;
     updatePause();
     direction = map_json[0].data.heading;
@@ -298,6 +298,32 @@ function updateMotion(dir) {
     }
 }
 
+function printEcho(dir, range) {
+    if(range <= 1) return;
+    range-=1;
+    var mx = 0, my = 0;
+    switch(dir) {
+        case "N":
+            mx=0;my=-1;
+            break;
+        case "S":
+            mx=0;my=1;
+            break
+            case "E":
+            mx=1;my=0;
+            break;
+        case "W":
+            mx=-1;my=0;
+            break;
+    }
+    console.log("echo: " + dir + " : " + range);
+    context.beginPath();
+    context.rect(locX*tile_size*3, locY*tile_size*3, (mx*range*tile_size*3+tile_size*3), (my*range*tile_size*3+tile_size*3));
+    console.log((mx*range*tile_size*3)+":"+(my*range*tile_size*3));
+    context.fillStyle = '#013857';
+    context.fill();
+}
+
 //Saves the creeks
 function addCreeks(_creeks, x, y) {
     
@@ -389,6 +415,9 @@ function handleJson(json) {
                         addCreeks(json.data.extras.creeks, locX*3+1, locY*3+1);
                         printCreeks();
                     }
+                    break;
+                case "echo":
+                    printEcho(lastAction.parameters.direction, json.data.extras.range);
                     break;
                 case "exploit":
                     updateContract(lastAction.parameters.resource, json.data.extras.amount);
