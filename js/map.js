@@ -318,7 +318,7 @@ function printEcho(dir, range) {
     }
     context.beginPath();
     context.rect(locX*tile_size*3, locY*tile_size*3, (mx*range*tile_size*3+tile_size*3), (my*range*tile_size*3+tile_size*3));
-    context.fillStyle = '#013857';
+    context.fillStyle = '#011B2B';
     context.fill();
 }
 
