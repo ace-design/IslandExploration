@@ -1,5 +1,5 @@
 /*
-@author Günther Jungbluth
+@author Günther Jungbluth 
 */
 
 var map_json = {};
